@@ -4,6 +4,9 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { UsersModule } from './users/users.module.js';
 import { DatabaseModule } from './database/database.module.js';
+import { EmployeesModule } from './employees/employees.module.js';
+import { APP_GUARD } from '@nestjs/core' ;
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -16,9 +19,28 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: 'YOUR_APP_SECRET',
       serviceId: 'restapi',
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 10000,
+        limit: 3,
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
     UsersModule,
-    DatabaseModule],
+    DatabaseModule,
+    EmployeesModule],
+
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+   {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard,
+  },
+],
 })
-export class AppModule {}
+export class AppModule {};

@@ -26,12 +26,12 @@ findOne(@Param('id', ParseIntPipe) id : number){
 }
 
 @Post()  //POST /users
-create(@Body(ValidationPipe) user: CreateUserDto){
+create(@Body() user: CreateUserDto){
     return this.usersService.create(user)
 }
 
 @Patch(':id') // PATCH /users/:id
-update(@Param('id', ParseIntPipe) id : number,@Body(ValidationPipe) 
+update(@Param('id', ParseIntPipe) id : number,@Body() 
 updateUserDto: UpdateUserDto){
     return this.usersService.update(id, updateUserDto)
 }
